@@ -35,7 +35,17 @@ namespace containers {
 				first = NULL;
 			}
 
+			~EntryList() {
+				Entry* en = first;
+				while (en != NULL) {
+					Entry* next = en->next;
+					delete en;
+					en = next;
+				}
+			}
+
 			Entry* first;
+
 		};
 
 		void put(const K& key, const V& data) {
@@ -97,15 +107,8 @@ namespace containers {
 		}
 
 		~HashMap() {
-			EntryList* el = hashTable;
 			for (int i = 0; i < length; i++) {
 				EntryList* el = hashTable[i];
-				Entry* en = el->first;
-				while (en != NULL) {
-					Entry* next = en->next;
-					delete en;
-					en = next;
-				}
 				delete el;
 			}
 		}
@@ -216,6 +219,10 @@ namespace containers {
 						newList->first = entry;
 					}
 
+				}
+				for (int i = 0; i < oldLength; i++) {
+					EntryList* el = hashTable[i];
+					delete el;
 				}
 				delete hashTable;
 			}

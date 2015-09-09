@@ -20,6 +20,17 @@ int main()
 	map->put("Use the force2", 3);
 	map->put("Use the force3", 4);
 	map->put("Use the force4", 5);
+
+
+
+	Iterator<int>* iterator = map->iterator();
+	while (iterator->hasNext()) {
+		cout << iterator->next() << endl;
+	}
+
+
+	cout << "Resize must occure" << endl;
+
 	map->put("Use the force5", 6);
 	map->put("Use the force6", 7);
 	map->put("Use the force7", 8);
@@ -27,10 +38,16 @@ int main()
 	map->put("Use the force9", 10);
 	map->put("Use the force10", 11);
 
-	Iterator<int>* iterator = map->iterator();
+	delete iterator;
+
+	iterator = map->iterator();
 	while (iterator->hasNext()) {
 		cout << iterator->next() << endl;
 	}
+
+	delete iterator;
+	delete map;
+
 
 	//TODO: rewrite with array and resize method
 
