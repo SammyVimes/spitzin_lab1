@@ -2,9 +2,28 @@
 // Our first program
 #include <iostream>
 #include <string>
+#include <vector>
+#include <list>
+#include <deque>
+#include <stack>
+#include <queue>
+#include <map>
 #include "HashMap.h"
 
 using namespace std;
+
+class stringcomparison
+{
+	bool reverse;
+public:
+	stringcomparison(const bool& revparam = false) {
+		reverse = revparam;
+	}
+	bool operator() (const string& lhs, const string& rhs) const {
+		if (reverse) return (lhs.length() > rhs.length());
+		else return (lhs.length() < rhs.length());
+	}
+};
 
 int main()
 {
@@ -14,6 +33,64 @@ int main()
 		 << endl
 		 << "Easy with the right kind of nails."
 		 << endl << endl;
+
+
+
+
+	std::vector<string> strings_vector;
+	strings_vector.push_back("TestValue1");
+	strings_vector.push_back("TestValue23");
+	strings_vector.push_back("TestValue2");
+
+
+	std::list<string> strings_list;
+	strings_list.push_back("TestValue1");
+	strings_list.push_back("TestValue2");
+
+	std::deque<string> strings_deque;
+	strings_deque.push_back("TestValue1");
+	strings_deque.push_back("TestValue2");
+
+
+	typedef std::priority_queue<string, std::vector<string>, stringcomparison> mypq_type;
+
+	cout << "Priority queue" << endl;
+	mypq_type pq(stringcomparison(true), strings_vector);
+	while (!pq.empty()) {
+		cout << ' ' << pq.top() << endl;
+		pq.pop();
+	}
+
+
+	cout << endl << "std::queue" << endl;
+	std::queue<string> strings_queue;
+	strings_queue.push("TestValue1");
+	strings_queue.push("TestValue23");
+	strings_queue.push("TestValue2");
+	while (!strings_queue.empty()) {
+		cout << ' ' << strings_queue.front() << endl;
+		strings_queue.pop();
+	}
+
+	cout << endl << "std::stack" << endl;
+	std::stack<string> strings_stack;
+	strings_stack.push("TestValue1");
+	strings_stack.push("TestValue2");
+	strings_stack.push("TestValue23");
+	while (!strings_stack.empty()) {
+		cout << ' ' << strings_stack.top() << endl;
+		strings_stack.pop();
+	}
+
+	cout << endl << "std::map" << endl;
+	std::map<string, string> strings_map;
+	strings_map["key1"] = "TestValue1";
+	strings_map["key2"] = "TestValue2";
+	strings_map["key3"] = "TestValue23";
+	for (std::map<string, string>::iterator it = strings_map.begin(); it != strings_map.end(); ++it) {
+		cout << ' ' << it->first << " => " << it->second << endl;
+	}
+
 	containers::HashMap<std::string, int>* map = new containers::HashMap<std::string, int>();
 	map->put("Use the force", 1);
 	map->put("Use the force1", 2);
@@ -51,8 +128,8 @@ int main()
 
 	//TODO: rewrite with array and resize method
 
-	//cout << map->get("Use the force") << endl;
-	//cout << map->get("Use");
+
+
 	return 0;
 
 }
