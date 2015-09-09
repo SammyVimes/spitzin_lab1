@@ -15,9 +15,27 @@ int main()
 		 << "Easy with the right kind of nails."
 		 << endl << endl;
 	containers::HashMap<std::string, int>* map = new containers::HashMap<std::string, int>();
-	map->put("Use the force", 123);
-	cout << map->get("Use the force") << endl;
-	cout << map->get("Use");
+	map->put("Use the force", 1);
+	map->put("Use the force1", 2);
+	map->put("Use the force2", 3);
+	map->put("Use the force3", 4);
+	map->put("Use the force4", 5);
+	map->put("Use the force5", 6);
+	map->put("Use the force6", 7);
+	map->put("Use the force7", 8);
+	map->put("Use the force8", 9);
+	map->put("Use the force9", 10);
+	map->put("Use the force10", 11);
+
+	Iterator<int>* iterator = map->iterator();
+	while (iterator->hasNext()) {
+		cout << iterator->next() << endl;
+	}
+
+	//TODO: rewrite with array and resize method
+
+	//cout << map->get("Use the force") << endl;
+	//cout << map->get("Use");
 	return 0;
 
 }

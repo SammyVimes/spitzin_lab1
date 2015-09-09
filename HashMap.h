@@ -12,6 +12,10 @@ namespace containers {
 
 		HashMap() {
 			hashTable = NULL;
+			length = 6;
+			loadFactor = 1.5;
+			size = 0;
+			init();
 		}
 
 		class Entry {
@@ -28,13 +32,10 @@ namespace containers {
 		class EntryList {
 		public:
 			EntryList() {
-				after = NULL;
 				first = NULL;
 			}
 
 			Entry* first;
-			size_t hash;
-			EntryList* after;
 		};
 
 		void put(const K& key, const V& data) {
@@ -50,14 +51,11 @@ namespace containers {
 				Entry* entry = new Entry(key, data);
 				entry->next = entryList->first;
 				entryList->first = entry;
+				size++;
 			}
-			else {
-				EntryList* newEntryList = new EntryList();
-				newEntryList->hash = hash;
-				Entry* entry = new Entry(key, data);
-				newEntryList->first = entry;
-				newEntryList->after = hashTable;
-				hashTable = newEntryList;
+			int threshold = int(length * loadFactor);
+			if (size > threshold) {
+				resize(length, threshold);
 			}
 		}
 
@@ -84,18 +82,15 @@ namespace containers {
 					if (en->key == key) {
 						if (en == prev) { //so "en" is "first"
 							entryList->first = en->next;
-						}
-						else {
+						} else {
 							prev->next = en->next;
 						}
+						size--;
 						returnValue = en->value;
 						delete en;
 						break;
 					}
 					prev = en;
-				}
-				if (entryList->first == NULL) {
-					removeEntryListWithHash(hash);
 				}
 			}
 			return returnValue;
@@ -103,8 +98,8 @@ namespace containers {
 
 		~HashMap() {
 			EntryList* el = hashTable;
-			while (el != NULL) {
-				EntryList* after = el->after;
+			for (int i = 0; i < length; i++) {
+				EntryList* el = hashTable[i];
 				Entry* en = el->first;
 				while (en != NULL) {
 					Entry* next = en->next;
@@ -112,44 +107,55 @@ namespace containers {
 					en = next;
 				}
 				delete el;
-				el = after;
 			}
 		}
 
 		class MapIterator : public Iterator<V> {
 		public:
 
-			MapIterator(EntryList* hashTable) {
-				curEntryList = hashTable;
-				curEntry = hashTable->first;
+			MapIterator(EntryList** hashTable, int length) {
+				this->table = hashTable;
+				this->length = length;
+				curEntry = NULL;
+				cur = -1;
 			}
 
 			V next() {
-				if (curEntry == NULL) {
-					return NULL;
-				}
-				if (curEntry->next == NULL) {
-					if (curEntryList->after == NULL) {
+				EntryList* curEntryList;
+				if (curEntry == NULL || curEntry->next == NULL) {
+					curEntry = NULL;
+					while (cur < length && curEntry == NULL) {
+						cur++;
+						curEntryList = table[cur];
+						curEntry = curEntryList->first;
+					}
+					if (curEntry == NULL) {
 						return NULL;
 					}
-					curEntryList = curEntryList->after;
-					curEntry = curEntryList->first;
-				}
-				else {
+				} else {
 					curEntry = curEntry->next;
 				}
 				return curEntry->value;
 			}
 
 			bool hasNext() {
-				bool has = false;
-				if (curEntry != NULL && curEntry->next != NULL) {
-					has = true;
+
+				Entry* fakeCurrent = curEntry;
+				EntryList* curEntryList;
+
+				int _cur = cur;
+
+				if (fakeCurrent == NULL || fakeCurrent->next == NULL) {
+					fakeCurrent = NULL;
+					while (_cur < length - 1 && fakeCurrent == NULL) {
+						_cur++;
+						curEntryList = table[_cur];
+						fakeCurrent = curEntryList->first;
+					}
+					return fakeCurrent != NULL;
+				} else {
+					return true;
 				}
-				else if (curEntryList != NULL && curEntryList->after != NULL) {
-					has = true;
-				}
-				return has;
 			}
 
 			V current() {
@@ -160,41 +166,61 @@ namespace containers {
 			}
 
 		private:
-			EntryList* curEntryList;
+			EntryList** table;
+			int cur;
+			int length;
 			Entry* curEntry;
 		};
 
 		Iterator<V>*  iterator() {
-			return new MapIterator(hashTable);
+			return new MapIterator(hashTable, length);
 		}
 
 	private:
-		EntryList* hashTable;
+		EntryList** hashTable;
+		int length;
+		int size;
+		float loadFactor;
 
 		EntryList* getEntryListForHash(const size_t hash) {
-			for (EntryList* curList = hashTable; curList != NULL; curList = curList->after) {
-				if (curList != NULL && curList->hash == hash) {
-					return curList;
-				}
-			}
-			return NULL;
+			int idx = getIndexForHash(hash);
+			return hashTable[idx];
 		}
 
-		void removeEntryListWithHash(const size_t hash) {
-			EntryList* prev = hashTable;
-			for (EntryList* curList = hashTable; curList != NULL; curList = curList->after) {
-				if (curList != NULL && curList->hash == hash) {
-					if (hashTable == curList) {
-						hashTable = curList->after;
-					}
-					else {
-						prev->after = curList->after;
-					}
-					delete curList;
-					break;
-				}
-				prev = curList;
+		int getIndexForHash(int hash) {
+			return hash & (length - 1);
+		}
+
+		void init() {
+			resize(0, length);
+		}
+
+		void resize(int oldLength, int newLength) {
+			EntryList** newHashTable = new EntryList*[length];
+			for (int i = 0; i < newLength; i++) {
+				newHashTable[i] = new EntryList();
 			}
+			if (hashTable != NULL) {
+				for (int i = 0; i < oldLength; i++) {
+					EntryList* curList = hashTable[i];
+
+					for (Entry* en = curList->first; en != NULL; en = en->next) {
+						K key = en->key;
+						V data = en->value;
+						size_t hash = hashCode(key);
+						int idx = hash & (newLength - 1);
+						EntryList* newList = newHashTable[idx];
+
+						Entry* entry = new Entry(key, data);
+						entry->next = newList->first;
+						newList->first = entry;
+					}
+
+				}
+				delete hashTable;
+			}
+			this->length = newLength;
+			this->hashTable = newHashTable;
 		}
 
 	};
