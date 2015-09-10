@@ -35,26 +35,39 @@ int main()
 		 << endl << endl;
 
 
-
-
 	std::vector<string> strings_vector;
 	strings_vector.push_back("TestValue1");
 	strings_vector.push_back("TestValue23");
 	strings_vector.push_back("TestValue2");
 
+	cout << endl << "std::vector<string> iterator" << endl;
+	for (std::vector<string>::iterator it = strings_vector.begin(); it != strings_vector.end(); ++it) {
+		cout << ' ' << *(it) << endl;
+	}
+
 
 	std::list<string> strings_list;
 	strings_list.push_back("TestValue1");
 	strings_list.push_back("TestValue2");
+	cout << endl << "std::list<string> iterator" << endl;
+	for (std::list<string>::iterator it = strings_list.begin(); it != strings_list.end(); ++it) {
+		cout << ' ' << *(it) << endl;
+	}
+
 
 	std::deque<string> strings_deque;
 	strings_deque.push_back("TestValue1");
 	strings_deque.push_back("TestValue2");
+	strings_deque.push_front("TestValue3");
+	cout << endl << "std::deque<string> iterator" << endl;
+	for (std::deque<string>::iterator it = strings_deque.begin(); it != strings_deque.end(); ++it) {
+		cout << ' ' << *(it) << endl;
+	}
 
 
 	typedef std::priority_queue<string, std::vector<string>, stringcomparison> mypq_type;
 
-	cout << "Priority queue" << endl;
+	cout << "std::priority_queue<string>" << endl;
 	mypq_type pq(stringcomparison(true), strings_vector);
 	while (!pq.empty()) {
 		cout << ' ' << pq.top() << endl;
@@ -62,7 +75,7 @@ int main()
 	}
 
 
-	cout << endl << "std::queue" << endl;
+	cout << endl << "std::queue<string>" << endl;
 	std::queue<string> strings_queue;
 	strings_queue.push("TestValue1");
 	strings_queue.push("TestValue23");
@@ -72,7 +85,7 @@ int main()
 		strings_queue.pop();
 	}
 
-	cout << endl << "std::stack" << endl;
+	cout << endl << "std::stack<string>" << endl;
 	std::stack<string> strings_stack;
 	strings_stack.push("TestValue1");
 	strings_stack.push("TestValue2");
@@ -82,13 +95,29 @@ int main()
 		strings_stack.pop();
 	}
 
-	cout << endl << "std::map" << endl;
+	cout << endl << "std::map<string, string>" << endl;
 	std::map<string, string> strings_map;
 	strings_map["key1"] = "TestValue1";
 	strings_map["key2"] = "TestValue2";
 	strings_map["key3"] = "TestValue23";
 	for (std::map<string, string>::iterator it = strings_map.begin(); it != strings_map.end(); ++it) {
 		cout << ' ' << it->first << " => " << it->second << endl;
+	}
+
+
+	cout << endl << "std::vector<int> for loop" << endl;
+	std::vector<int> int_vector;
+	int_vector.push_back(1);
+	int_vector.push_back(2);
+	int_vector.push_back(3);
+	int_vector.push_back(4);
+	int_vector.push_back(5);
+	for (int i = 0; i < int_vector.size(); i++) {
+		cout << ' ' << int_vector[i] << endl;
+	}
+	cout << endl << "std::vector<int> iterator" << endl;
+	for (std::vector<int>::iterator it = int_vector.begin(); it != int_vector.end(); ++it) {
+		cout << ' ' << *(it) << endl;
 	}
 
 	containers::HashMap<std::string, int>* map = new containers::HashMap<std::string, int>();
@@ -125,11 +154,5 @@ int main()
 	delete iterator;
 	delete map;
 
-
-	//TODO: rewrite with array and resize method
-
-
-
 	return 0;
-
 }
