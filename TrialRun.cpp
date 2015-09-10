@@ -58,7 +58,7 @@ int main()
 	std::deque<string> strings_deque;
 	strings_deque.push_back("TestValue1");
 	strings_deque.push_back("TestValue2");
-	strings_deque.push_front("TestValue3");
+	strings_deque.push_front("TestValue3");strings_deque.fr
 	cout << endl << "std::deque<string> iterator" << endl;
 	for (std::deque<string>::iterator it = strings_deque.begin(); it != strings_deque.end(); ++it) {
 		cout << ' ' << *(it) << endl;
