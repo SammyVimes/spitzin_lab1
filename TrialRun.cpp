@@ -144,6 +144,17 @@ int main()
 	map->put("Use the force9", 10);
 	map->put("Use the force10", 11);
 
+
+	containers::HashMap<std::string, int>* throwableMap = new containers::HashMap<std::string, int>();
+	throwableMap->put("all good", 0);
+	try {
+		throwableMap->get("all bad");
+	} catch (std::exception& exception) {
+		cerr << "Exception occured: " << exception.what() << endl;
+	}
+	cout << "And a good one: " << throwableMap->get("all good") << endl;
+	delete throwableMap;
+
 	delete iterator;
 
 	iterator = map->iterator();

@@ -69,7 +69,7 @@ namespace containers {
 			}
 		}
 
-		V get(const K& key) {
+		V get(const K& key) throw(std::exception) {
 			size_t hash = hashCode(key);
 			EntryList* entryList = getEntryListForHash(hash);
 			if (entryList != NULL) {
@@ -79,7 +79,9 @@ namespace containers {
 					}
 				}
 			}
-			return NULL; //what if V == int|float|etc?
+			std::string errMsg = "No value found for key '" + key + "'";
+			const char *cstr = errMsg.c_str();
+			throw std::exception(cstr);
 		}
 
 		V remove(const K& key) {
@@ -234,7 +236,7 @@ namespace containers {
 
 	template <class K>
 	size_t hashCode(const K& key) {
-		return -1;
+		return key;
 	}
 
 	//basic specifications
