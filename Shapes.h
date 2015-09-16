@@ -5,47 +5,49 @@
 class Shape {
 protected:
 	float xCenter, yCenter;
-	float lineWidth;
+	int lineWidth;
 public:
-	Shape (float lineWidth, float xCenter, float yCenter);
-	virtual void draw () = 0;
-	virtual friend std::ostream& operator<< (std::ostream& stream, const Shape& shape) = 0;
+	Shape (int lineWidth, float xCenter, float yCenter);
+	virtual void draw (std::ostream& stream) = 0;
+	friend std::ostream& operator<< (std::ostream& stream, Shape& shape);
 	void setCenter (float xCenter, float yCenter);
+	void setLineWidth(int lineWidth);
 	float getX () const;
 	float getY () const;
+	int getLineWidth () const;
 };
 
-class Circle: public Shape {
+class Circle: public virtual Shape {
 protected:
 	float radius;
 public:
-	Circle(float radius, float lineWidth, float xCenter, float yCenter); 
-	void draw ();
-	friend std::ostream& operator<< (std::ostream& stream, const Shape& shape);
+	Circle(float radius, int lineWidth, float xCenter, float yCenter); 
+	void draw (std::ostream& stream);
+	float getRadius() const;
 };
 
-class Text: public Shape {
+class DoubleCircle: public Circle {
+private:
+	float inner_radius;
+public:
+	DoubleCircle(float radius, float inner_radius, int lineWidth, float xCenter, float yCenter);
+	void draw (std::ostream& stream);
+	float getInnerRadius() const;
+};
+
+class Text: public virtual Shape {
 protected:
 	int font_size;
 	std::string text;
 public:
-	Text(int font_size, std::string text, float lineWidth, float xCenter, float yCenter);
-	void draw ();
-	friend std::ostream& operator<< (std::ostream& stream, const Shape& shape);
+	void draw (std::ostream& stream);
+	Text(int font_size, std::string text, int lineWidth, float xCenter, float yCenter);
+	int getFontSize() const;
+	std::string getText() const;
 };
 
-class DoubleCircle: public Circle, public Shape {
-private:
-	float inner_radius;
+class CircleText: public Circle, public Text  {
 public:
-	DoubleCircle(float radius, float inner_radius, float lineWidth, float xCenter, float yCenter);
-	void draw ();
-	friend std::ostream& operator<< (std::ostream& stream, const Shape& shape);
-};
-
-class CircleText: public Circle, public Text, public Shape  {
-public:
-	CircleText(float radius, float inner_radius, int font_size, std::string text, float lineWidth, float xCenter, float yCenter);
-	void draw ();
-	friend std::ostream& operator<< (std::ostream& stream, const Shape& shape);
+	CircleText(float radius, int font_size, std::string text, int lineWidth, float xCenter, float yCenter);
+	void draw (std::ostream& stream);
 };
