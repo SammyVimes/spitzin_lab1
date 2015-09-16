@@ -159,12 +159,12 @@ int main()
 	shapes_map->put(1, new Circle(2.5, 1, 3, 3));
 	shapes_map->put(2, new DoubleCircle(3, 2, 2, 5, 5));
 	shapes_map->put(3, new CircleText(10, 2, "the text in the circle", 2, 10, 10));
+	shapes_map->put(4, new Text(10, "an usual text", 2, 15, 15));
 	
 	Iterator<Shape*>* shapes_iterator = shapes_map->iterator();
 	while (shapes_iterator->hasNext()) {
 		Shape* curr = shapes_iterator->next();
 		cout << *curr << endl;
-		delete curr;
 	}
 	delete shapes_map;
 	delete shapes_iterator;
