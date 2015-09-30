@@ -149,8 +149,9 @@ int main()
 	throwableMap->put("all good", 0);
 	try {
 		throwableMap->get("all bad");
-	} catch (std::exception& exception) {
-		cerr << "Exception occured: " << exception.what() << endl;
+	} catch (containers::NoValueException<std::string>& exception) {
+		std::string errMsg = "No value found for key '" + exception.getKey() + "'";
+		cerr << "Exception occured: " << errMsg << endl;
 	}
 	cout << "And a good one: " << throwableMap->get("all good") << endl;
 	delete throwableMap;

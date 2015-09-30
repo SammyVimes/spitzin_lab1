@@ -6,6 +6,25 @@
 
 namespace containers {
 
+	template <class K>
+	class NoValueException {
+
+	private:
+
+		K key;
+
+	public:
+
+		NoValueException(K key) {
+			this->key = key;
+		}
+
+		K getKey() {
+			return key;
+		}
+
+	};
+
 	template <class K, class V> class HashMap {
 
 	public:
@@ -69,7 +88,7 @@ namespace containers {
 			}
 		}
 
-		V get(const K& key) throw(std::exception) {
+		V get(const K& key) throw(NoValueException<K>) {
 			size_t hash = hashCode(key);
 			EntryList* entryList = getEntryListForHash(hash);
 			if (entryList != NULL) {
@@ -79,14 +98,12 @@ namespace containers {
 					}
 				}
 			}
-			std::string errMsg = "No value found for key '" + key + "'";
-			const char *cstr = errMsg.c_str();
-			throw std::exception(cstr);
+			throw NoValueException<K>(key);
 		}
 
 		V remove(const K& key) {
 			size_t hash = hashCode(key);
-			V returnValue = NULL;
+			V returnValue;
 			EntryList* entryList = getEntryListForHash(hash);
 			if (entryList != NULL) {
 				Entry* prev = entryList->first;
